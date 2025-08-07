@@ -1,3 +1,2 @@
 # TerriData
-Working on the education outcomes dataset from terridata
-
+Working on the education outcomes dataset from TerriData
