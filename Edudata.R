@@ -52,6 +52,26 @@ wide_data <- filtered_data %>%
     names_glue = "{Indicator}_{.value}"
   )
 
+wide_data <- wide_data%>%
+  select(-)
+
+
+
+
+
+
+
+
+
+
+column_names <- names(wide_data)
+view(column_names)
+
+
+
+
+
+
 
 
 
