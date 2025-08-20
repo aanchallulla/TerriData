@@ -85,7 +85,8 @@ filtered_data <- terridata%>%
 select(
 -Mes,                   # Remove month column
 -`Qualitative Data`,     # Remove empty qualitative column
--Source                 # Remove source column
+-Source,# Remove source column
+-Subcategory
 )
 filtered_data %>% distinct() 
 filtered_data[!duplicated(filtered_data),]
@@ -96,7 +97,7 @@ filtered_data[duplicated(filtered_data),] ##This tells us that we have 1655 row 
 duplicates <- filtered_data |>
 dplyr::summarise(n = dplyr::n(),
 .by = c(`Department Code`, Department, `Entity Code`, Entity,
-Dimension, Subcategory, Year, `Unit of Measurement`, Indicator)) |>
+Dimension, Year, `Unit of Measurement`, Indicator)) |>
 dplyr::filter(n > 1L)
 View(duplicates)
 unique(duplicates$Indicator)
@@ -119,7 +120,7 @@ unique(row_filtered$Indicator)  ##We are now left with 29 indicators
 row_duplicates <- row_filtered|>
 dplyr::summarise(n = dplyr::n(),
 .by = c(`Department Code`, Department, `Entity Code`, Entity,
-Dimension, Subcategory, Year, `Unit of Measurement`, Indicator)) |>
+Dimension, Year, `Unit of Measurement`, Indicator)) |>
 dplyr::filter(n > 1L)
 View(row_duplicates)
 unique(row_duplicates$Indicator)
@@ -153,8 +154,57 @@ wide_data <- row_filtered1 %>%
 pivot_wider(names_from =`Indicator`, values_from = `Numerical Data`)
 View(wide_data)
 glimpse(wide_data)
+
 ##Exploring the wide data
+
+
 unique(wide_data$`Coverage in higher education`)
 
 sum(is.na(wide_data$`Coverage in higher education`))
 
+
+
+## Adding the EFD dataset
+
+efd <- read_excel("Thesis /EfD_all-that-glitters - edited.xlsx")
+glimpse(efd)
+length(unique(efd$muncod))
+
+efd <- efd %>%
+  mutate(
+    muncod= as.character(muncod),
+    muncod_old = as.character(muncod_old)
+  )
+
+
+## Replacing the muncode column to look like the terridata code
+
+lookup <- unique(data.frame(
+  old = efd$muncod_old,
+  new = efd$muncod_new
+))
+
+# Then replace using match
+efd$muncod <- lookup$new[match(efd$muncod, lookup$old)]
+
+# If some values don't have a match and you want to keep original:
+efd$muncod <- ifelse(is.na(match(efd$muncod, lookup$old)),
+                    efd$muncod,
+                    lookup$new[match(efd$muncod, lookup$old)])
+##Dropping extra columns and making a new dataset 
+
+efd_new <- efd %>% 
+  select(
+    -muncod_old,                  
+    -`muncod_new`,  
+  )
+glimpse(efd_new)
+glimpse(wide_data)
+
+View(efd_new)
+View(wide_data)
+
+wide_data %>% 
+  filter(Year== "2005" &
+        `Entity Code` == "05002" ) %>% 
+View()
