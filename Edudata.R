@@ -14,6 +14,9 @@ glimpse(terridata)
 str(terridata)
 unique(terridata$`Entity Code`)
 length(unique(terridata$Entity))
+
+
+length(unique(terridata$Year))
 length(unique(terridata$Department))
 length(unique(terridata$Department))
 length(unique(terridata$`Indicator`))
@@ -37,6 +40,7 @@ terridata %>%
 
 glimpse(terridata$`Numerical Data`)
 unique(terridata$`Numerical Data`)
+
 
 ##Modifying the dataset
 terridata <- terridata %>%
@@ -86,7 +90,8 @@ select(
 -Mes,                   # Remove month column
 -`Qualitative Data`,     # Remove empty qualitative column
 -Source,# Remove source column
--Subcategory
+-Subcategory,
+-`Unit of Measurement`
 )
 filtered_data %>% distinct() 
 filtered_data[!duplicated(filtered_data),]
@@ -97,7 +102,7 @@ filtered_data[duplicated(filtered_data),] ##This tells us that we have 1655 row 
 duplicates <- filtered_data |>
 dplyr::summarise(n = dplyr::n(),
 .by = c(`Department Code`, Department, `Entity Code`, Entity,
-Dimension, Year, `Unit of Measurement`, Indicator)) |>
+Dimension, Year, Indicator)) |>
 dplyr::filter(n > 1L)
 View(duplicates)
 unique(duplicates$Indicator)
@@ -120,7 +125,7 @@ unique(row_filtered$Indicator)  ##We are now left with 29 indicators
 row_duplicates <- row_filtered|>
 dplyr::summarise(n = dplyr::n(),
 .by = c(`Department Code`, Department, `Entity Code`, Entity,
-Dimension, Year, `Unit of Measurement`, Indicator)) |>
+Dimension, Year, Indicator)) |>
 dplyr::filter(n > 1L)
 View(row_duplicates)
 unique(row_duplicates$Indicator)
@@ -196,7 +201,7 @@ efd$muncod <- ifelse(is.na(match(efd$muncod, lookup$old)),
 efd_new <- efd %>% 
   select(
     -muncod_old,                  
-    -`muncod_new`,  
+    -`muncod_new`  
   )
 glimpse(efd_new)
 glimpse(wide_data)
@@ -205,6 +210,19 @@ View(efd_new)
 View(wide_data)
 
 wide_data %>% 
-  filter(Year== "2005" &
-        `Entity Code` == "05002" ) %>% 
+  filter(Year== "2022" &
+        `Entity Code` == "05002" ) %>%  
 View()
+
+##Merging both datasets
+
+length(unique(efd_new$muncod))
+length(unique(wide_data$`Entity Code`))
+
+##using full join so as to keep all the rows from both datasets
+combined_data <- full_join(wide_data, efd_new, 
+                           by = c("Entity Code" = "muncod", "Year" = "year"))
+combined_data %>% 
+  filter(Year== "2005" &
+           `Entity Code` == "05002" ) %>% 
+  View()

@@ -228,7 +228,20 @@ view(long_data)
 
 
 
+data <- data.frame(x1 = c(1, 2, 3, 1, 1, 2),        # Create example data
+                   x2 = 1:6,
+                   x3 = 3:1)
+data                                                # Print example data
 
 
+val_repl <- c(1, 3)                                 # Specify values to be replaced
+val_repl      
 
+data_new1 <- sapply(data,                           # Replace values in all columns
+                    function(x) replace(x, x %in% val_repl, 99))
+data_new1  
 
+library(tidyverse)
+library(babynames)
+?left_join
+babynames
