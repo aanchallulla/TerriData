@@ -5,9 +5,22 @@ library(ggplot2)  # Visualization
 library(tidyr)    # Data tidying
 library(readxl)
 
+##Loading Datasets
+victim_sv <- read_excel("Victim Dataset/Sexual Violence.xlsx")
+victim_kid<-read_excel("Victim Dataset/Kidnappings.xlsx")
+victim_war<-read_excel("Victim Dataset/War Actions.xlsx")
+victim_pop<-read_excel("Victim Dataset/Population Attacks.xlsx")
+victim_mur<-read_excel("Victim Dataset/Selective Murders.xlsx")
+victim_ter<-read_excel("Victim Dataset/Terrorist Attacks.xlsx")
+victim_civ<-read_excel("Victim Dataset/Civil Property .xlsx")
+victim_dis<-read_excel("Victim Dataset/Forced Disappearance.xlsx")
+victim_mas<-read_excel("Victim Dataset/Massacres.xlsx")
+victim_mine<-read_excel("Victim Dataset/Mines .xlsx")
+victim_rec <- read_excel("Conflict data/Victim Dataset/Recruitment and use of children and adolescents.xlsx")
+
+
 ##SEXUAL VIOLENCE DATSET
 ##Loading the dataset
-victim_sv <- read_excel("Victim Dataset/Sexual Violence.xlsx")
 View(victim_sv)
 glimpse(victim_sv)
 str(victim_sv)
@@ -47,13 +60,12 @@ victim_sv_stud %>%
   arrange(`Year`) %>%
   View
 
-----------------------------------
+
 ##KIDNAPPINGS DATASET
 ##Loading the dataset
   
-victim_kid<-read_excel("Victim Dataset/Kidnappings.xlsx")
 
-victim_kid <- victim_kid %>%
+victim_kid<-victim_kid %>%
   rename(
     Case_ID = `ID Caso`,
     Municipality_DANE_Code = `Código DANE de Municipio`,
@@ -80,6 +92,7 @@ victim_kid <- victim_kid %>%
     Latitude = Latitud,
     Longitude = Longitud
   )
+
 View(victim_kid)
 glimpse(victim_kid)
 colnames(victim_kid)
@@ -127,11 +140,10 @@ victim_kid_stud %>%
   arrange(`Year`) %>%
   View
 
-----------------------
+
 ##WAR ACTIONS DATASET
   ##Loading the dataset
 
-victim_war<-read_excel("Victim Dataset/War Actions.xlsx")
 colnames(victim_war)
 library(dplyr)
 
@@ -194,11 +206,10 @@ victim_war_stud %>%
   View
 
 
-----------------------------------------
+
 ##Population Attack ACTIONS DATASET
 ##Loading the dataset
 
-victim_pop<-read_excel("Victim Dataset/Population Attacks.xlsx")
 colnames(victim_pop)
 library(dplyr)
 
@@ -260,11 +271,10 @@ victim_pop_stud %>%
   arrange(`Year`) %>%
   View
 
-----------------------------------------
+
   ##SELECTIVE MURDERS DATASET
   ##Loading the dataset
   
-victim_mur<-read_excel("Victim Dataset/Selective Murders.xlsx")
 colnames(victim_mur)
 library(dplyr)
 
@@ -330,11 +340,10 @@ victim_mur_stud %>%
   View
 
 
-----------------------------------------
+
   ##TERRORIST ATTACKS DATASET
   ##Loading the dataset
   
-victim_ter<-read_excel("Victim Dataset/Terrorist Attacks.xlsx")
 colnames(victim_ter)
 library(dplyr)
 
@@ -398,11 +407,10 @@ victim_ter_stud %>%
   View
 
 
-----------------------------------------
+
   ##Civil Property DATASET
   ##Loading the dataset
   
-victim_civ<-read_excel("Victim Dataset/Civil Property .xlsx")
 colnames(victim_civ)
 library(dplyr)
 
@@ -468,11 +476,10 @@ victim_civ_stud %>%
   View
 
 
-----------------------------------------
+
   ##Forced Disappearance DATASET
-  ##Loading the dataset
-  
-victim_dis<-read_excel("Victim Dataset/Forced Disappearance.xlsx")
+  ##Loading the data set
+
 colnames(victim_dis)
 library(dplyr)
 
@@ -542,11 +549,10 @@ victim_dis_stud %>%
   View
 
 
-----------------------------------------
+
   ##Massacres DATASET
   ##Loading the dataset
   
-victim_mas<-read_excel("Victim Dataset/Massacres.xlsx")
 colnames(victim_mas)
 library(dplyr)
 
@@ -611,11 +617,10 @@ victim_mas_stud %>%
   arrange(`Year`) %>%
   View
 
-----------------------------------------
+
   ##Mines DATASET
   ##Loading the dataset
   
-victim_mine<-read_excel("Victim Dataset/Mines .xlsx")
 colnames(victim_mine)
 library(dplyr)
 
@@ -683,5 +688,88 @@ victim_mine_stud <- victim_mine_stud %>%
   )
 
 victim_mine_stud %>%
+  arrange(`Year`) %>%
+  View
+
+##RECRUITMENT DATASET
+
+colnames(victim_rec)
+
+victim_rec <- victim_rec %>%
+  rename(
+    Case_ID = `ID Caso`,
+    Municipality_DANE_Code = `Código DANE de Municipio`,
+    Municipality = Municipio,
+    Department = Departamento,
+    Year = Año,
+    Month = Mes,
+    Day = Día,
+    Person_ID = `ID Persona`,
+    Sex = Sexo,
+    Ethnicity = Etnia,
+    Occupation = Ocupación,
+    Caletera = Caletera,
+    Campanera = Campanera,
+    Cook = Cocinera,
+    Commander = Comandante,
+    Combatant = Combatiente,
+    Accounting = Contabilidad,
+    Training = Entrenamiento,
+    Escort = Escolta,
+    Extortions = Extorsiones,
+    Other_Unconventional_Weapons_Manufacture = `Fabricación de Otras Armas No Convencionales`,
+    Landmine_Manufacture_or_Placement = `Fabricación y/o Siembra de Minas Antipersonal`,
+    Guard = Guardia,
+    Informant = Informante,
+    Patroller = Patrullera,
+    Radio_Operations = `Radio Operaciones`,
+    Raspachin = Raspachín,
+    Health_Services = `Servicios de Salud`,
+    Hitman_Activities = Sicariato,
+    Organizational_Work = `Trabajo Organizativo`,
+    Drug_Trafficking = `Tráfico de Estupefacientes`,
+    Weapons_Transportation = `Transporte de Armas`,
+    Unknown_Professions = `Sin Información de Oficios Realizados`,
+    Other_Profession = `Otro Oficio Realizado`,
+    Age = Edad,
+    Latitude = Latitud,
+    Longitude = Longitud
+  )
+
+colnames(victim_rec_stud)
+victim_rec_stud<- victim_rec %>% 
+  filter(Occupation== "ESTUDIANTE") 
+
+victim_rec_stud$Other_Profession <- as.numeric(as.character(victim_rec_stud$Other_Profession))
+
+victim_rec_stud <- victim_rec_stud %>%
+  mutate(Total_Victims = rowSums(across(c(12:34)), na.rm = TRUE))
+
+
+victim_rec_studn <- victim_rec_stud%>%
+  select(
+    Case_ID,
+    Municipality_DANE_Code,
+    Municipality,
+    Department ,
+    Year,
+    Person_ID,
+    Sex,
+    Occupation,
+    Age,
+    Total_Victims
+  )
+
+victim_rec_studn <- victim_rec_studn %>%
+  mutate(
+    Sex = recode(Sex,
+                 "HOMBRE" = "man",
+                 "MUJER" = "woman",
+                 "SIN INFORMACION" ="No information"),
+    Occupation = recode(Occupation,
+                        "ESTUDIANTE" = "Student")
+  )
+
+victim_rec_studn %>%
   arrange(`Year`) %>%
   View
